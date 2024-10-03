@@ -1,10 +1,10 @@
 import { createUser } from "../model/userModel.js";
-import { CreateTeam } from "../model/teamModel.js";
+import { CreateTeam, ValidateTeamCode } from "../model/teamModel.js";
 
 export const RegisterByTeamCreation = async (req, res) => {
   try {
-    const data = await req.body;
-    const { teamName, leader } = req.body;
+    const { leader, data } = await req.body.userData;
+    const { teamName } = await req.body;
 
     const teamCreationDetails = { teamName, leader };
 
@@ -39,4 +39,42 @@ export const RegisterByTeamCreation = async (req, res) => {
   }
 };
 
-export const RegisterByTeamCode = async (req, res) => {};
+export const RegisterByTeamCode = async (req, res) => {
+  try {
+    const { teamCode } = await req.body;
+    const { data } = await req.body.userData;
+
+    const validationDetails = await ValidateTeamCode(teamCode);
+
+    if (!validationDetails.success) {
+      res
+        .status(401)
+        .json({ message: "Team Code Doesn't Match", success: false });
+    }
+    const teamId = validationDetails.teamId;
+    const registrationData = [...data, teamId];
+
+    const UserCreation = await createUser(registrationData);
+
+    if (!UserCreation.success) {
+      res
+        .status(500)
+        .json({ message: "Failure while creating a user", success: false });
+    }
+
+    const responseData = {
+      success: true,
+      teamCode: teamCode,
+    };
+
+    res
+      .status(200)
+      .json({
+        message: "User creation successfull",
+        success: true,
+        data: responseData,
+      });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
