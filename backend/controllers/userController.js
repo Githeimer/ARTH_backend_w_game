@@ -8,9 +8,11 @@ export const RegisterByTeamCreation = async (req, res) => {
     const { teamName } = req.body;
 
     const teamCreationDetails = { teamName, team_leader_email: email };
+    console.log(teamCreationDetails);
 
     // Create a team
     const teamCreation = await CreateTeam(teamCreationDetails);
+    // console.log(teamCreation);
 
     // Check if team creation was successful
     if (!teamCreation.success) {
@@ -74,7 +76,7 @@ export const RegisterByTeamCode = async (req, res) => {
       email,
       phone_number,
       institution,
-      address,
+      address,  
       social_media,
       team_id,
     };

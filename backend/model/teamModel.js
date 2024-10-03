@@ -5,12 +5,16 @@ export const CreateTeam = async (TeamDetails) => {
   try {
     const { teamName, team_leader_email } = TeamDetails;
 
+    console.log(`Model details ${teamName}, ${team_leader_email}`);
+
     const TeamCode = GenerateTeamCode();
-    const teamData = {
+    let teamData = {
       team_code: TeamCode,
       team_name: teamName,
       team_leader_email: team_leader_email,
     };
+
+    console.log(teamData);
 
     const { data, error } = await supabase
       .from("team")
