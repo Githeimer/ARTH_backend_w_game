@@ -8,11 +8,11 @@ export const RegisterByTeamCreation = async (req, res) => {
     const { teamName } = req.body;
 
     const teamCreationDetails = { teamName, team_leader_email: email };
-    console.log(teamCreationDetails);
+    
 
     // Create a team
     const teamCreation = await CreateTeam(teamCreationDetails);
-    // console.log(teamCreation);
+    
 
     // Check if team creation was successful
     if (!teamCreation.success) {
@@ -30,11 +30,13 @@ export const RegisterByTeamCreation = async (req, res) => {
         address,
         social_media,
         team_id: teamId,
+        team_code:teamCode
       };
 
       // Store data along with teamId
+      
       const UserCreation = await createUser(registrationData);
-
+      
       // Check if user creation was successful
       if (!UserCreation.success) {
         return res
@@ -81,8 +83,9 @@ export const RegisterByTeamCode = async (req, res) => {
       team_id,
     };
 
+    console.log(`Registration Data send ${registrationData}`)
     const UserCreation = await createUser(registrationData);
-    console.log(UserCreation);
+    
     // Check if user creation was successful
     if (!UserCreation.success) {
       return res
