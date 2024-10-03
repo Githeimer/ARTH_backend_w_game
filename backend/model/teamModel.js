@@ -9,7 +9,7 @@ export const CreateTeam = async (TeamDetails) => {
 
     const TeamCode = GenerateTeamCode();
     
-    let teamData = {
+    const teamData = {
       team_code: TeamCode,
       team_name: teamName,
       team_leader_email: team_leader_email,
@@ -20,8 +20,8 @@ export const CreateTeam = async (TeamDetails) => {
     const { data, error } = await supabase
       .from("team")
       .insert(teamData)
-      .select("*"); // Make sure to select data to get back the inserted row
-
+      .select("count"); // Make sure to select data to get back the inserted row
+      console.log(data);
     if (error) {
       console.error("Error inserting team data:", error.message);
       return {
@@ -46,7 +46,7 @@ export const CreateTeam = async (TeamDetails) => {
       teamCode: TeamCode,
     };
   } catch (err) {
-    console.error("Unexpected error in CreateTeam function:", err.message);
+    console.error("Error in CreateTeam function:", err.message);
     return {
       success: false,
       message: err.message,
@@ -68,4 +68,64 @@ export const ValidateTeamCode = async (TeamCode) => {
 export const ViewTeamStatus = async (TeamCode) => {
   //interaction with supabase to check count of members;
   //also send the team name, members details in certain object format
+  
+try {
+  let { data: team, error } = await supabase
+  .from('team')
+  .select("*")
+  .eq('team_code', TeamCode);
+
+  if(error)
+  {
+    console.log(`Error in retrieving data:${error.message}`);
+  }
+
+  else{
+    const number=data.length;
+    const team_name=data[0].team_name;
+    const member=[];
+    
+  data.forEach(element => {
+      const email=element.team_leader_email;
+      member.push(email);
+  });
+
+  
+    if(number==3)
+    {
+      const responseData = {
+      teamName: team_name,
+      memberCount: number,
+      members: {
+        player1: member[0],
+        player2: member[1],
+        player3: member[2],
+      },
+    };
+
+    return responseData;
+
+    } 
+    
+    
+}
+
+
+
+} catch (error) {
+  
+  console.log('Error');
+  return{
+    success:false,
+    message:error.message
+  };
+
+ }
+
+  
+  
+  
+
+
+
 };
