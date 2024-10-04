@@ -1,5 +1,6 @@
 import { createUser } from "../model/userModel.js";
 import { CreateTeam, ValidateTeamCode } from "../model/teamModel.js";
+// import {add_count} from "../utilities/updateCount.js";
 
 export const RegisterByTeamCreation = async (req, res) => {
   try {
@@ -37,6 +38,7 @@ export const RegisterByTeamCreation = async (req, res) => {
       
       const UserCreation = await createUser(registrationData);
       
+      // console.log(UserCreation)
       // Check if user creation was successful
       if (!UserCreation.success) {
         return res
@@ -59,11 +61,13 @@ export const RegisterByTeamCreation = async (req, res) => {
 
 export const RegisterByTeamCode = async (req, res) => {
   try {
+    console.log(req.body);
     const { teamCode } = req.body;
     const { name, email, phone_number, institution, address, social_media } =
       req.body.userData;
 
     const validationDetails = await ValidateTeamCode(teamCode);
+    
 
     // Check if team code is valid
     if (!validationDetails.success) {
@@ -73,6 +77,8 @@ export const RegisterByTeamCode = async (req, res) => {
     }
 
     const team_id = validationDetails.teamId;
+    
+
     const registrationData = {
       name,
       email,
@@ -81,10 +87,14 @@ export const RegisterByTeamCode = async (req, res) => {
       address,  
       social_media,
       team_id,
+      team_code:teamCode,
+      
+      
     };
 
-    console.log(`Registration Data send ${registrationData}`)
+    console.log(registrationData);
     const UserCreation = await createUser(registrationData);
+    console.log(UserCreation);
     
     // Check if user creation was successful
     if (!UserCreation.success) {

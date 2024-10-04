@@ -3,6 +3,7 @@ import supabase from "../config/supabaseConnection.js";
 export const createUser = async (userData) => {
   try {
    
+    console.log(userData);
     const { data, error } = await supabase.from("player").insert([userData]);
     
     if (error) {

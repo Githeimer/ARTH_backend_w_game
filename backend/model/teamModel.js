@@ -55,72 +55,94 @@ export const CreateTeam = async (TeamDetails) => {
 };
 
 export const ValidateTeamCode = async (TeamCode) => {
-  //response should be this format if it is true
-  const teamId = 1;
-  const responseData = {
-    success: true,
-    teamId: teamId,
-  };
-
-  return responseData;
-};
-
-export const ViewTeamStatus = async (TeamCode) => {
-  //interaction with supabase to check count of members;
-  //also send the team name, members details in certain object format
   
-try {
-  let { data: team, error } = await supabase
-  .from('team')
-  .select("*")
-  .eq('team_code', TeamCode);
 
+  let { data: player, error } = await supabase
+  .from('player')
+  .select("team_id")
+  .eq('team_code', TeamCode)
+  .order('created_at',{ascending:false})
+
+  
+  
   if(error)
   {
-    console.log(`Error in retrieving data:${error.message}`);
+    console.log('Error Detected')
+    return {
+      success:false
+    }
   }
 
   else{
-    const number=data.length;
-    const team_name=data[0].team_name;
-    const member=[];
+    return {
+      success:true,
+      teamId:player[0].team_id,
+    }
+  }
+
+};
+
+export const ViewTeamStatus = async () => {
+//   //interaction with supabase to check count of members;
+//   //also send the team name, members details in certain object format
+  
+// try {
+//   let { data: team, error } = await supabase
+//   .from('team')
+//   .select("*")
+//   .eq('team_code', TeamCode);
+
+//   if(error)
+//   {
+//     console.log(`Error in retrieving data:${error.message}`);
+//   }
+
+//   else{
+//     const number=data.length;
+//     const team_name=data[0].team_name;
+//     const member=[];
     
-  data.forEach(element => {
-      const email=element.team_leader_email;
-      member.push(email);
-  });
+//     data.forEach(element => {
+//       const email=element.team_leader_email;
+//       member.push(email);
+//   });
 
   
-    if(number==3)
-    {
-      const responseData = {
-      teamName: team_name,
-      memberCount: number,
-      members: {
-        player1: member[0],
-        player2: member[1],
-        player3: member[2],
-      },
-    };
+//     if(number==3)
+//     {
+//       const responseData = {
+//       teamName: team_name,
+//       memberCount: number,
+//       members: {
+//         player1: member[0],
+//         player2: member[1],
+//         player3: member[2],
+//       },
+//     };
 
-    return responseData;
+//     return responseData;
 
-    } 
+//     }
+    
+//     else if (number< 3)
+//     {
+
+//     }
     
     
-}
+// }
 
 
 
-} catch (error) {
+// } catch (error) {
   
-  console.log('Error');
-  return{
-    success:false,
-    message:error.message
-  };
+//   console.log('Error');
+//   return{
+//     success:false,
+//     message:error.message
+//   };
 
- }
+//  }
 
   
   
