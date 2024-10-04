@@ -38,7 +38,7 @@ export const RegisterByTeamCreation = async (req, res) => {
       
       const UserCreation = await createUser(registrationData);
       
-      // console.log(UserCreation)
+      
       // Check if user creation was successful
       if (!UserCreation.success) {
         return res
