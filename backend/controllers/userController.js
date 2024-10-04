@@ -11,6 +11,7 @@ export const RegisterByTeamCreation = async (req, res) => {
 
     // Create a team
     const teamCreation = await CreateTeam(teamCreationDetails);
+    console.log(teamCreation);
 
     // Check if team creation was successful
     if (!teamCreation.success) {
@@ -18,7 +19,7 @@ export const RegisterByTeamCreation = async (req, res) => {
         .status(500)
         .json({ message: "Error while creating team", success: false });
     } else {
-      const { teamCode, teamId } = teamCreation;
+      const { teamId, teamCode } = teamCreation;
 
       const registrationData = {
         name,
@@ -31,7 +32,9 @@ export const RegisterByTeamCreation = async (req, res) => {
       };
 
       // Store data along with teamId
+
       const UserCreation = await createUser(registrationData);
+      console.log(UserCreation);
 
       // Check if user creation was successful
       if (!UserCreation.success) {
@@ -60,6 +63,7 @@ export const RegisterByTeamCode = async (req, res) => {
       req.body.userData;
 
     const validationDetails = await ValidateTeamCode(teamCode);
+    const teamName = validationDetails.teamName;
 
     // Check if team code is valid
     if (!validationDetails.success) {
@@ -80,7 +84,7 @@ export const RegisterByTeamCode = async (req, res) => {
     };
 
     const UserCreation = await createUser(registrationData);
-    console.log(UserCreation);
+
     // Check if user creation was successful
     if (!UserCreation.success) {
       return res
@@ -89,13 +93,13 @@ export const RegisterByTeamCode = async (req, res) => {
     }
 
     // User creation successful
-    const responseData = { success: true, teamCode };
+    const responseData = { success: true, teamCode, teamName };
     return res.status(200).json({
       message: "User creation successful",
       success: true,
       data: responseData,
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message, success: false });
   }
 };

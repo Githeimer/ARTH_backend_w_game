@@ -1,9 +1,14 @@
+import {randomBytes} from "node:crypto"
+
 export const GenerateTeamCode = () => {
-  // Generate 3 random digits using Math.random
-  const randomDigits = Math.floor(100 + Math.random() * 900); // Ensures it's a 3-digit number
 
-  // Concatenate "TEAM" with the random digits
-  const code = "TEAM" + randomDigits;
+  const number=Math.floor(Math.random()*(3-5)+5);
 
+  const code=randomBytes(number).toString("hex");
+  // console.log(code);
+  // console.log(typeof(code));
+  
   return code;
 };
+
+

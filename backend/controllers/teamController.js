@@ -8,7 +8,7 @@ export const TeamStatus = async (req, res) => {
 
     if (!TeamStatus.success) {
       res
-        .statu(500)
+        .status(500)
         .json({ message: "error while checking team status", success: false });
     }
 
