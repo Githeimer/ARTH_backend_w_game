@@ -3,6 +3,6 @@ import { TeamStatus } from "../controllers/teamController.js";
 
 const Router = router();
 
-Router.post("/team/:id", TeamStatus);
+Router.get("/team/:id", TeamStatus);
 
 export default Router;
