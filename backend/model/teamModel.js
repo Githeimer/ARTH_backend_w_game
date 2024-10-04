@@ -5,23 +5,25 @@ export const CreateTeam = async (TeamDetails) => {
   try {
     const { teamName, team_leader_email } = TeamDetails;
 
-    
-
     const TeamCode = GenerateTeamCode();
-    
+    const date = new Date();
+    const formattedDate = date.toLocaleString("en-GB", { hour12: false });
+
+    console.log(formattedDate);
     const teamData = {
       team_code: TeamCode,
       team_name: teamName,
+      created_at: formattedDate,
       team_leader_email: team_leader_email,
+      score: 0,
     };
-
-   
 
     const { data, error } = await supabase
       .from("team")
-      .insert(teamData)
-      .select("count"); // Make sure to select data to get back the inserted row
-      console.log(data);
+      .insert([teamData])
+      .select("*"); // Make sure to select data to get back the inserted row
+    console.log(data);
+
     if (error) {
       console.error("Error inserting team data:", error.message);
       return {

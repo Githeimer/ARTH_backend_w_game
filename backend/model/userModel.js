@@ -2,12 +2,13 @@ import supabase from "../config/supabaseConnection.js";
 
 export const createUser = async (userData) => {
   try {
-   
     console.log(userData);
-    const { data, error } = await supabase.from("player").insert([userData]);
-    
+    const { data, error } = await supabase
+      .from("player")
+      .insert([userData])
+      .select("*");
+
     if (error) {
-      
       return {
         success: false,
         message: error.message,
@@ -15,7 +16,7 @@ export const createUser = async (userData) => {
     } else {
       return {
         success: true,
-        data,
+        data: data,
       };
     }
   } catch (err) {
