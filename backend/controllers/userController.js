@@ -1,6 +1,6 @@
 import { createUser } from "../model/userModel.js";
 import { CreateTeam, ValidateTeamCode } from "../model/teamModel.js";
-// import {add_count} from "../utilities/updateCount.js";
+import {check_member} from '../utilities/checkMember.js'
 
 export const RegisterByTeamCreation = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ export const RegisterByTeamCreation = async (req, res) => {
 
     // Create a team
     const teamCreation = await CreateTeam(teamCreationDetails);
-    console.log(teamCreation);
+    
 
     // Check if team creation was successful
     if (!teamCreation.success) {
@@ -58,12 +58,14 @@ export const RegisterByTeamCreation = async (req, res) => {
 
 export const RegisterByTeamCode = async (req, res) => {
   try {
-    console.log(req.body);
+   
     const { teamCode } = req.body;
     const { name, email, phone_number, institution, address, social_media } =
       req.body.userData;
 
     const validationDetails = await ValidateTeamCode(teamCode);
+
+    
 
     // Check if team code is valid
     if (!validationDetails.success) {
@@ -73,6 +75,7 @@ export const RegisterByTeamCode = async (req, res) => {
     }
 
     const team_id = validationDetails.teamId;
+   
     
 
     const registrationData = {
@@ -88,23 +91,36 @@ export const RegisterByTeamCode = async (req, res) => {
       
     };
 
-    console.log(`Registration Data send ${registrationData}`)
-    const UserCreation = await createUser(registrationData);
+    const resultCount= await check_member(teamCode);
     
-    // Check if user creation was successful
-    if (!UserCreation.success) {
-      return res
-        .status(500)
-        .json({ message: "Failure while creating a user", success: false });
+
+    if(!resultCount.success)
+    {
+      return {
+        message:"Team is completely filled"
+      }
     }
 
-    // User creation successful
-    const responseData = { success: true, teamCode, teamName };
-    return res.status(200).json({
-      message: "User creation successful",
-      success: true,
-      data: responseData,
-    });
+    else{
+      const UserCreation = await createUser(registrationData);
+      
+      // Check if user creation was successful
+      if (!UserCreation.success) {
+        return res
+          .status(500)
+          .json({ message: "Failure while creating a user", success: false });
+      }
+  
+      // User creation successful
+      const responseData = { success: true, teamCode };
+      return res.status(200).json({
+        message: "User creation successful",
+        success: true,
+        data: responseData,
+      });
+    }
+    
+   
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
   }
