@@ -1,5 +1,6 @@
 import supabase from "../config/supabaseConnection.js";
 import { GenerateTeamCode } from "../utilities/teamCodeGenerator.js";
+import { check_member } from "../utilities/checkMember.js";
 
 export const CreateTeam = async (TeamDetails) => {
   try {
@@ -9,7 +10,6 @@ export const CreateTeam = async (TeamDetails) => {
     const date = new Date();
     const formattedDate = date.toLocaleString("en-GB", { hour12: false });
 
-    console.log(formattedDate);
     const teamData = {
       team_code: TeamCode,
       team_name: teamName,
@@ -21,8 +21,7 @@ export const CreateTeam = async (TeamDetails) => {
     const { data, error } = await supabase
       .from("team")
       .insert([teamData])
-      .select("*"); // Make sure to select data to get back the inserted row
-    console.log(data);
+      .select("*");
 
     if (error) {
       console.error("Error inserting team data:", error.message);
@@ -32,7 +31,6 @@ export const CreateTeam = async (TeamDetails) => {
       };
     }
 
-    // Check if data is null or empty
     if (!data || data.length === 0) {
       console.error("No data returned from Supabase after insertion.");
       return {
@@ -41,10 +39,9 @@ export const CreateTeam = async (TeamDetails) => {
       };
     }
 
-    // Return success response with relevant team data
     return {
       success: true,
-      teamId: data[0]?.team_id, // Safely accessing team_id
+      teamId: data[0]?.team_id,
       teamCode: TeamCode,
     };
   } catch (err) {
@@ -57,99 +54,74 @@ export const CreateTeam = async (TeamDetails) => {
 };
 
 export const ValidateTeamCode = async (TeamCode) => {
-  
+  try {
+    const { data, error } = await supabase
+      .from("team")
+      .select("*")
+      .eq("team_code", TeamCode);
 
-  let { data: player, error } = await supabase
-  .from('player')
-  .select("team_id")
-  .eq('team_code', TeamCode)
-  .order('created_at',{ascending:false})
-
-  
-  
-  if(error)
-  {
-    console.log('Error Detected')
-    return {
-      success:false
+    if (error) {
+      console.log("Error while validating code");
+      return {
+        success: false,
+        message: error,
+      };
+    } else {
+      return {
+        success: true,
+        teamId: data[0].team_id,
+        teamName: data[0].team_name,
+      };
     }
-  }
-
-  else{
+  } catch (error) {
+    console.error("Error in ValidateCode function:", err.message);
     return {
-      success:true,
-      teamId:player[0].team_id,
-    }
+      success: false,
+      message: err.message,
+    };
   }
-
 };
 
-export const ViewTeamStatus = async () => {
-//   //interaction with supabase to check count of members;
-//   //also send the team name, members details in certain object format
-  
-// try {
-//   let { data: team, error } = await supabase
-//   .from('team')
-//   .select("*")
-//   .eq('team_code', TeamCode);
+export const MemberCount = async (team_id) => {
+  try {
+    const { data, count, error } = await supabase
+      .from("player")
+      .select("*", { count: "exact" })
+      .eq("team_id", team_id);
 
-//   if(error)
-//   {
-//     console.log(`Error in retrieving data:${error.message}`);
-//   }
+    if (error) {
+      console.log("Error while counting members:", error.message);
+      return { success: false, message: error.message };
+    }
 
-//   else{
-//     const number=data.length;
-//     const team_name=data[0].team_name;
-//     const member=[];
-    
-//     data.forEach(element => {
-//       const email=element.team_leader_email;
-//       member.push(email);
-//   });
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        message: "Team not found or no members in this team.",
+      };
+    }
 
-  
-//     if(number==3)
-//     {
-//       const responseData = {
-//       teamName: team_name,
-//       memberCount: number,
-//       members: {
-//         player1: member[0],
-//         player2: member[1],
-//         player3: member[2],
-//       },
-//     };
+    const responseData = {
+      success: true,
+      memberCount: count,
+    };
+    return responseData;
+  } catch (error) {
+    console.log("Unexpected error while counting members:", error.message);
+    return { success: false, message: error.message };
+  }
+};
 
-//     return responseData;
+export const ViewTeamStatus = async (team_id) => {
+  // Get the team members associated with the team_id
+  const memberData = await check_member(team_id);
 
-//     }
-    
-//     else if (number< 3)
-//     {
-
-//     }
-    
-    
-// }
-
-
-
-// } catch (error) {
-  
-//   console.log('Error');
-//   return{
-//     success:false,
-//     message:error.message
-//   };
-
-//  }
-
-  
-  
-  
-
-
-
+  if (!memberData.success) {
+    return { success: false, message: memberData.message };
+  } else {
+    return {
+      success: true,
+      members: memberData.members,
+    };
+  }
 };
