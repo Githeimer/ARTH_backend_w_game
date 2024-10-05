@@ -2,16 +2,13 @@ import supabase from "../config/supabaseConnection.js";
 
 export const createUser = async (userData) => {
   try {
-    
     const { data, error } = await supabase
       .from("player")
       .insert([userData])
       .select("*");
 
-     
-      
-
     if (error) {
+      console.log("Error while creating a User");
       return {
         success: false,
         message: error.message,
@@ -22,10 +19,11 @@ export const createUser = async (userData) => {
         data: data,
       };
     }
-  } catch (err) {
+  } catch (error) {
+    console.log("Unexecpeted Error in createUser function");
     return {
       success: false,
-      message: err.message,
+      message: error.message,
     };
   }
 };

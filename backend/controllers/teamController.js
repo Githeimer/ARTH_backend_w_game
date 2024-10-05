@@ -1,38 +1,50 @@
-import { ViewTeamStatus } from "../model/teamModel.js";
+import { ViewTeamStatus, ValidateTeamCode } from "../model/teamModel.js";
 
 export const TeamStatus = async (req, res) => {
   try {
-    const teamCode = req.params;
+    const teamCode = req.params.id;
 
-    const TeamStatus = await ViewTeamStatus(teamCode);
-    console.log(TeamStatus);
+    // Validate the provided team code
+    const validateTeam = await ValidateTeamCode(teamCode);
 
-    if (!TeamStatus.success) {
-      res
+    if (!validateTeam.success) {
+      return res
         .status(500)
-        .json({ message: "error while checking team status", success: false });
-    } else {
-      console.log('ResponseData Below');
-      console.log(TeamStatus.player[0]);
-      console.log(TeamStatus.membercount);
-      const responseData = {
-        teamName: TeamStatus.teamName,
-        memberCount: TeamStatus.membercount,
-        members: {
-          player1: TeamStatus.player[0],
-          player2: TeamStatus.player[1],
-          player3: TeamStatus.player[2],
-        },
-      };
-
-      console.log(responseData);
-      console.log('Response data above');
-
-      res
-        .status(200)
-        .json({ message: "Success", success: true, data: responseData });
+        .json({ message: "Invalid Team Code", success: false });
     }
+
+    const team_id = validateTeam.teamId;
+    const teamName = validateTeam.teamName;
+
+    // Get the team status and members using the team_id
+    const teamStatus = await ViewTeamStatus(team_id);
+
+    if (!teamStatus.success) {
+      return res
+        .status(500)
+        .json({ message: "Error while fetching team status", success: false });
+    }
+
+    // Structure the response data with proper member assignment
+    const responseData = {
+      teamName: teamName,
+      memberCount: teamStatus.members.length, // Get the count of actual members
+      members: {
+        player1: teamStatus.members[0] || "Not Assigned",
+        player2: teamStatus.members[1] || "Not Assigned",
+        player3: teamStatus.members[2] || "Not Assigned",
+      },
+    };
+
+    return res.status(200).json({
+      message: "Success",
+      success: true,
+      data: responseData,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message, success: false });
+    console.error("Server error:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Server error: " + error.message, success: false });
   }
 };
