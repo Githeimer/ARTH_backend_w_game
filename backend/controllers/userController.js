@@ -42,9 +42,11 @@ export const RegisterByTeamCreation = async (req, res) => {
 
       // Check if user creation was successful
       if (!UserCreation.success) {
-        return res
-          .status(500)
-          .json({ message: "Failure while creating a user", success: false });
+        return res.status(500).json({
+          message: "Failure while creating a user",
+          error: UserCreation.message,
+          success: false,
+        });
       }
 
       // User registration successful
@@ -74,7 +76,11 @@ export const RegisterByTeamCode = async (req, res) => {
     if (!validationDetails.success) {
       return res
         .status(401)
-        .json({ message: "Team Code Doesn't Match", success: false });
+        .json({
+          message: "Team Code Doesn't Match",
+          error: validationDetails.message,
+          success: false,
+        });
     }
 
     const team_id = validationDetails.teamId;

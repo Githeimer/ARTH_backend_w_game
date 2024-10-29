@@ -44,11 +44,11 @@ export const CreateTeam = async (TeamDetails) => {
       teamId: data[0]?.team_id,
       teamCode: TeamCode,
     };
-  } catch (err) {
-    console.error("Error in CreateTeam function:", err.message);
+  } catch (error) {
+    console.error("Error in CreateTeam function:", error.message);
     return {
       success: false,
-      message: err.message,
+      message: error.message,
     };
   }
 };
@@ -60,6 +60,12 @@ export const ValidateTeamCode = async (TeamCode) => {
       .select("*")
       .eq("team_code", TeamCode);
 
+    if (data[0].team_id == undefined || data[0].team_id == null) {
+      return {
+        success: false,
+        message: "Team isn't Registered Yet",
+      };
+    }
     if (error) {
       console.log("Error while validating code");
       return {
@@ -74,10 +80,10 @@ export const ValidateTeamCode = async (TeamCode) => {
       };
     }
   } catch (error) {
-    console.error("Error in ValidateCode function:", err.message);
     return {
       success: false,
-      message: err.message,
+      message: error.message,
+      error: "Team isn't Registered Yet",
     };
   }
 };
