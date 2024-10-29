@@ -8,9 +8,11 @@ export const TeamStatus = async (req, res) => {
     const validateTeam = await ValidateTeamCode(teamCode);
 
     if (!validateTeam.success) {
-      return res
-        .status(500)
-        .json({ message: "Invalid Team Code", success: false });
+      return res.status(500).json({
+        message: validateTeam.message,
+        success: false,
+        error: validateTeam.error,
+      });
     }
 
     const team_id = validateTeam.teamId;
@@ -22,7 +24,7 @@ export const TeamStatus = async (req, res) => {
     if (!teamStatus.success) {
       return res
         .status(500)
-        .json({ message: "Error while fetching team status", success: false });
+        .json({ message: teamStatus.message, success: false });
     }
 
     // Structure the response data with proper member assignment
