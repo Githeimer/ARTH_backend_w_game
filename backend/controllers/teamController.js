@@ -3,34 +3,28 @@ import { ViewTeamStatus, ValidateTeamCode } from "../model/teamModel.js";
 export const TeamStatus = async (req, res) => {
   try {
     const teamCode = req.params.id;
-
-    // Validate the provided team code
     const validateTeam = await ValidateTeamCode(teamCode);
 
-    if (!validateTeam.success) {
-      return res.status(500).json({
-        message: validateTeam.message,
+    if (!validateTeam.success || !validateTeam.teamId) {
+      return res.status(404).json({
+        message: "The provided team code does not match any existing team",
         success: false,
-        error: validateTeam.error,
       });
     }
 
-    const team_id = validateTeam.teamId;
-    const teamName = validateTeam.teamName;
-
-    // Get the team status and members using the team_id
-    const teamStatus = await ViewTeamStatus(team_id);
+    const { teamId, teamName } = validateTeam;
+    const teamStatus = await ViewTeamStatus(teamId);
 
     if (!teamStatus.success) {
-      return res
-        .status(500)
-        .json({ message: teamStatus.message, success: false });
+      return res.status(500).json({
+        message: teamStatus.message,
+        success: false,
+      });
     }
 
-    // Structure the response data with proper member assignment
     const responseData = {
-      teamName: teamName,
-      memberCount: teamStatus.members.length, // Get the count of actual members
+      teamName,
+      memberCount: teamStatus.members.length,
       members: {
         player1: teamStatus.members[0] || "Not Assigned",
         player2: teamStatus.members[1] || "Not Assigned",
