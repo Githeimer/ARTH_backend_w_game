@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start" : "node index.js"
+    "start": "node index.js"
   },
   "author": "githeimer",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.15",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "random-string-alphanumeric-generator": "^0.12.2"
   }
 }
