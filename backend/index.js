@@ -4,7 +4,8 @@ import cors from "cors";
 
 import userRoutes from "./routes/user.routes.js";
 import teamRoutes from "./routes/team.routes.js";
-import scoreUpdate from "./routes/score.routes.js";
+import  scoreUpdate from "./routes/score.routes.js";
+import playerRoutes from "./routes/player.routes.js"
 import DecodingDecode from "./routes/decodingDecade.routes.js";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use("/u", userRoutes);
 app.use("/t", teamRoutes);
 app.use("/", scoreUpdate);
 app.use("/decodingdecade", DecodingDecode);
+app.use('/p',playerRoutes);
 
 app.listen(PORT, () => {
   console.log(`Backend Running at PORT: ${PORT}`);
