@@ -5,7 +5,7 @@ export const AddCode=async()=>{
     try {
     
         const {data, error} = await supabase
-        .from('scoreboard')
+        .from('player')
         .select('*')
         .is('code',null);
 
@@ -21,6 +21,7 @@ export const AddCode=async()=>{
             {
                 const player = data[i];
                 const newCode = GeneratePlayerCode(); 
+                console.log(newCode);
         
                 const { data,error } = await supabase
                   .from('player')
@@ -43,7 +44,7 @@ export const AddCode=async()=>{
     }
 
     } catch (error) {
-        console.log('Error in fetching Scoreboard for code insertion');
+        console.log('Error in fetching Player Data for code insertion')
         return{
             success:false,
             message:error,
