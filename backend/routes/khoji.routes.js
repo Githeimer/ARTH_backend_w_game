@@ -1,7 +1,11 @@
 import { Router as router } from "express";
-import { UpdateGameData } from "../controllers/khoji.controller.js";
+import {
+  getGameData,
+  UpdateGameData,
+} from "../controllers/khoji.controller.js";
 
 const Router = router();
 Router.patch("/khoji", UpdateGameData);
+Router.get("/khoji/:playerCode", getGameData);
 
 export default Router;
