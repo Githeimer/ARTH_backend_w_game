@@ -8,6 +8,7 @@ import scoreUpdate from "./routes/score.routes.js";
 import playerRoutes from "./routes/player.routes.js";
 import DecodingDecode from "./routes/decodingDecade.routes.js";
 import Khoji from "./routes/khoji.routes.js";
+import Test from "./routes/test.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(cors());
 dotenv.config();
 const PORT = process.env.PORT;
 
+app.use(Test);
 app.use("/u", userRoutes);
 app.use("/t", teamRoutes);
 // app.use("/", scoreUpdate);
