@@ -1,39 +1,36 @@
 import {AddCode} from "../model/playerModel.js";
-import supabase from "../config/supabaseConnection.js";
+import {updatePlayerInfo} from '../model/gameModel.js'
 
 
-export const playerinfo=async(req,res)=>{
+
+export const codeUpdate=async(req,res)=>{
 try {
-  
-  // Retrieving demo data
-  // let { data, error } = await supabase
-  // .from('game_data')
-  // .select('*')
+const additionCode= await  AddCode();
+await updatePlayerInfo();
 
-  // if(data)
-  // {
-  //  return res.json({
-  //   data
-  //   })
-  //  }
-  //  else{
-  //   return res.json({
-  //     message:error.message
-  //   })
-  //  }
+  if(additionCode.success)
+  {
+    return res
+    .status(200)
+    .json({
+      success:additionCode.success,
+      message:additionCode.message
+    })
+  }
 
-  
-    // Insertion of playercode into player-table with empty value
-    // const insert=await AddCode();
-    
-
-    const {playerCode,level,time}=req.body;
-    const {coordinates_x,coordinates_y,region}=req.body;
-
-   
+  else{
+    return res
+    .status(500)
+    .json({
+      success:additionCode.success,
+      message:additionCode.message
+    })
+  }
 
 
-} catch (error) {
+
+ }
+  catch (error) {
     console.log(error);
     return res
       .status(500)

@@ -20,7 +20,7 @@ app.use("/u", userRoutes);
 app.use("/t", teamRoutes);
 // app.use("/", scoreUpdate);
 app.use("/decodingdecade", DecodingDecode);
-// app.use("/p", playerRoutes);
+app.use("/p", playerRoutes);
 app.use("/game", Khoji);
 
 app.listen(PORT, () => {

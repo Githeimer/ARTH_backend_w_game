@@ -92,3 +92,200 @@ export const getPlayerData = async (PlayerCode) => {
     };
   }
 };
+
+export  const updatePlayerInfo=async(res,req)=>{
+
+
+const targetCodeId=async(player)=>{
+
+    const code=player.player_code;
+    const id=player.player_id;
+
+    let { data: gamers, error0 } = await supabase
+    .from('game_data')
+    .select('*')
+    
+    if(error0)
+    {
+      return{
+        message:error0.message,
+        success:false
+      }
+    }
+
+    else
+    {
+      const bool=gamers.every(individual=>{
+      individual.player_id!=id && individual.player_code!=code
+      })
+    
+    if(!bool)
+    {
+      const { data, error } = await supabase
+      .from('game_data')
+      .insert([
+      { "player_code":String(code), "player_id": id },
+      ])
+      .select("*")
+
+      if(error)
+      {
+        return {
+          message:error.message,
+          success:false
+        }
+      }
+
+      else
+      {
+        return {
+          message:"Successfully Updated player_code in game_data",
+          success:true
+        }
+      }
+      
+
+    }
+
+    }
+
+
+    }
+ 
+
+// empty id field with code empty
+//  const targetId=async(player)=>{
+
+//     const code=player.player_code;
+//     const id=player.player_id;
+    
+//     let { data: gamers, error0 } = await supabase
+//     .from('game_data')
+//     .select('*')
+
+
+//     if(error0)
+//     {
+//       return{
+//         message:error0.message,
+//         success:false
+//       }
+//     }
+//     else
+//     {   
+//       const bool=gamers.every((individual,i)=>{
+//        individual.player_code===code && !individual.player_id
+//     })
+
+//     console.log(bool);
+//     if(bool){
+     
+//      const { data, error } = await supabase
+//     .from('game_data')
+//     .update({"player_id": id})
+//     .eq('player_code', code)
+//     .select('*')
+    
+//     if(data)
+//     {
+//       console.log("Data in targetId",data)
+//     }
+//     else{
+//       console.log(error)
+//     }
+  
+  
+//   }
+
+    
+    
+//   }
+//    return 0;
+//   }
+ 
+
+// empty code feild with code as empty 
+// const targetCode=async(player)=>{
+
+//   const code=player.player_code;
+//   const id=player.player_id;
+    
+//     let { data: gamers, error0 } = await supabase
+//     .from('game_data')
+//     .select('*')
+
+//     if(error0)
+//     {
+//       return{
+//         message:error0.message,
+//         success:false
+//       }
+//     }
+//     else
+//     {   
+//       const bool=gamers.every((individual,i)=>{
+//         !individual.player_code && individual.player_id===id;
+//     })
+
+//     console.log(bool);
+
+//     if(bool){
+     
+//     const { data, error } = await supabase
+//     .from('game_data')
+//     .update({"player_code": code})
+//     .eq('player_id', id)
+//     .select('*')
+    
+//       if(data)
+//       {
+//         console.log("TargetCode",data);
+//       }
+//       else{
+//         console.log(error);
+//       }
+  
+  
+//   }
+    
+//   }
+//    return 0;
+// }
+ 
+  
+  
+
+let { data: player, error2 } = await supabase
+  .from('player')
+  .select('player_code, player_id')
+
+  
+if(error2)
+{
+  return{
+    message:error2.message,
+    success:false
+  }
+}
+
+else{
+  for(var i=0;i<player.length;i++)
+  {
+
+    await targetCodeId(player[i]);
+
+
+  }
+
+}
+  
+
+  
+
+
+
+
+
+
+}
+

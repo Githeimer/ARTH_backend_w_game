@@ -3,11 +3,15 @@ import {GeneratePlayerCode} from '../utilities/playerCodeGenerate.js';
 
 export const AddCode=async()=>{
     try {
-    
-        const {data, error} = await supabase
+        
+        console.log("Add code is running");
+
+        const {data:gamer, error} = await supabase
         .from('player')
         .select('*')
-        .is('code',null);
+        .is('player_code',null)
+
+
 
         if (error) {
         console.error('Error fetching data with empty code', error);
@@ -16,32 +20,55 @@ export const AddCode=async()=>{
             success:false
         }
           
-        } else {
-            for (let i = 0; i < data.length; i++) 
-            {
-                const player = data[i];
-                const newCode = GeneratePlayerCode(); 
-                console.log(newCode);
+        }
         
-                const { data,error } = await supabase
+        else if(gamer.length===0)
+        {
+            return {
+                message:"No row available with empty playerCode",
+                success:true
+            }
+
+        }
+        
+        else {
+           
+            for (let i = 0; i < gamer.length; i++) 
+            {
+                
+               
+                const newCode =  await GeneratePlayerCode(); 
+                
+                const playerId=gamer[i].player_id;
+                console.log(playerId);
+
+                const { data:individual,error } = await supabase
                   .from('player')
-                  .update({ code: newCode })
-                  .eq('id', player.id); 
+                  .update({ player_code: newCode })
+                  .eq('player_id', playerId)
+                  .select('*') 
+
+                // console.log(individual);                  
                
                 if(error)
                 {
-                    console.log('Error in updating playerCode in empty playerCode row')
+                    // console.log('Error in updating playerCode in empty playerCode row')
                     return {
-                        message:error,
+                        message:error.message,
                         success:false
                     }
                 }
                 else
-                {
-                    console.log('Update Completed');
+                {              
+                 return {
+                    message:"Update Completed",
+                    success:true
+                }
                 }    
             }
-    }
+        }
+
+    
 
     } catch (error) {
         console.log('Error in fetching Player Data for code insertion')
@@ -50,5 +77,16 @@ export const AddCode=async()=>{
             message:error,
         }
     }
-
 }
+
+
+    
+
+
+
+
+
+
+
+
+
